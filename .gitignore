@@ -12,3 +12,5 @@ firebase-admin-key.json
 *.mjs
 *.cjs
 .turbo/
+
+.vercel
