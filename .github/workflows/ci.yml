@@ -25,12 +25,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm --filter @zipy/customer-web lint || echo "lint no configurado aun"
+        run: pnpm --filter @zipy/customer-web lint
         continue-on-error: true
 
       - name: Type Check
-        run: pnpm --filter @zipy/customer-web typecheck || echo "typecheck no configurado aun"
-        continue-on-error: true
+        run: pnpm --filter @zipy/customer-web typecheck
 
   test:
     name: Unit Tests
@@ -45,8 +44,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @zipy/customer-web test || echo "tests no configurados aun"
-        continue-on-error: true
+      - run: pnpm --filter @zipy/customer-web test
 
   build:
     name: Build

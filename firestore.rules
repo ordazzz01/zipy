@@ -1,0 +1,77 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Admin: acceso total
+    match /{document=**} {
+      allow read, write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // Users: solo su propio perfil y direcciones
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if request.auth != null && request.auth.token.role == 'admin';
+
+      match /addresses/{addrId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+        allow read, write: if request.auth != null && request.auth.token.role == 'admin';
+      }
+    }
+
+    // Merchants: lectura pública + escritura solo owner/admin
+    match /merchants/{merchantId} {
+      allow read: if true;
+      allow write: if request.auth != null && (request.auth.token.merchantId == merchantId || request.auth.token.role == 'admin');
+
+      match /branches/{branchId} {
+        allow read: if true;
+        allow write: if request.auth != null && (request.auth.token.merchantId == merchantId || request.auth.token.role == 'admin');
+      }
+
+      match /categories/{categoryId} {
+        allow read: if true;
+        allow write: if request.auth != null && (request.auth.token.merchantId == merchantId || request.auth.token.role == 'admin');
+      }
+
+      match /products/{productId} {
+        allow read: if true;
+        allow write: if request.auth != null && (request.auth.token.merchantId == merchantId || request.auth.token.role == 'admin');
+      }
+    }
+
+    // Orders: customer ve las suyas, merchant ve las de su negocio, driver ve las asignadas
+    match /orders/{orderId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.customerId ||
+        request.auth.token.merchantId == resource.data.merchantId ||
+        request.auth.token.role == 'admin' ||
+        (request.auth.token.role == 'driver' && resource.data.driverId == request.auth.uid)
+      );
+      allow create: if request.auth != null && request.auth.token.role == 'customer';
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.customerId ||
+        request.auth.token.merchantId == resource.data.merchantId ||
+        request.auth.token.role == 'admin'
+      );
+      allow delete: if request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // Drivers: solo su perfil
+    match /drivers/{driverUid} {
+      allow read, write: if request.auth != null && request.auth.uid == driverUid;
+      allow read, write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // Coupons: lectura pública, escritura admin
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // Denegar todo lo demas por defecto
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

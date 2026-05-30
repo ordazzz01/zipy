@@ -1,13 +1,16 @@
 {
   "name": "Zipy",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Zipy — Plataforma de delivery local on-demand",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm --filter @zipy/customer-web dev",
+    "build": "pnpm --filter @zipy/customer-web build",
+    "lint": "pnpm --filter @zipy/customer-web lint",
+    "typecheck": "pnpm --filter @zipy/customer-web typecheck",
     "seed": "npx tsx seed/scripts/seed.ts",
     "seed:clean": "npx tsx seed/scripts/clean.ts",
-    "seed:reset": "npx tsx seed/scripts/clean.ts && npx tsx seed/scripts/seed.ts"
+    "seed:reset": "npx tsx seed/scripts/clean.ts && npx tsx seed/scripts/seed.ts",
+    "emulators": "cd functions && npx firebase emulators:start --project=zipy-dev"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +18,6 @@
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
     "turbo": "^2.9.16",
-    "typescript": "^6.0.3",
-    "vercel": "^54.6.1"
+    "typescript": "^6.0.3"
   }
 }
