@@ -5,14 +5,6 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
 
-  // Valores por defecto para entorno demo local
-  // Sobrescribir con .env.local para desarrollo real
-  env: {
-    NEXT_PUBLIC_USE_DEMO: 'true',
-    NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
-    NEXT_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST: 'localhost:8080',
-  },
-
   headers: async () => [
     {
       source: '/(.*)',
