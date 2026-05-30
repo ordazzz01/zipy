@@ -7,16 +7,18 @@
     "build": "pnpm --filter @zipy/customer-web build",
     "lint": "pnpm --filter @zipy/customer-web lint",
     "typecheck": "pnpm --filter @zipy/customer-web typecheck",
-    "seed": "npx tsx seed/scripts/seed.ts",
-    "seed:clean": "npx tsx seed/scripts/clean.ts",
-    "seed:reset": "npx tsx seed/scripts/clean.ts && npx tsx seed/scripts/seed.ts",
-    "emulators": "cd functions && npx firebase emulators:start --project=zipy-dev"
+    "seed": "FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080 npx tsx seed/scripts/seed.ts",
+    "seed:clean": "FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080 npx tsx seed/scripts/clean.ts",
+    "seed:reset": "pnpm seed:clean && pnpm seed",
+    "emulators": "npx firebase emulators:start --project=zipy-dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
+    "firebase-admin": "^13.10.0",
+    "firebase-tools": "^13.35.1",
     "turbo": "^2.9.16",
     "typescript": "^6.0.3"
   }

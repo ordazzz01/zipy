@@ -7,6 +7,15 @@ import { useAuth } from '@/lib/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const DEMO_ACCOUNTS = [
+  { label: 'Cliente', email: 'cliente@zipy.demo', password: 'Demo123!', role: 'customer' },
+  { label: 'Dueño de tienda', email: 'dueno@zipy.demo', password: 'Demo123!', role: 'merchant' },
+  { label: 'Repartidor', email: 'repartidor@zipy.demo', password: 'Demo123!', role: 'driver' },
+  { label: 'Admin', email: 'admin@zipy.demo', password: 'Admin123!', role: 'admin' },
+];
+
+const IS_DEMO = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_USE_DEMO === 'true';
+
 export default function LoginPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -15,18 +24,18 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Redirigir si ya hay sesion
   useEffect(() => {
     if (authLoading) return;
     if (user) router.replace('/');
   }, [user, authLoading, router]);
 
-  if (authLoading) {
-    return <LoadingSkeleton />;
-  }
+  if (authLoading) return <LoadingSkeleton />;
+  if (user) return null;
 
-  if (user) {
-    return null; // useEffect redirige
+  function fillDemo(acc: typeof DEMO_ACCOUNTS[number]) {
+    setEmail(acc.email);
+    setPassword(acc.password);
+    setError('');
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -61,6 +70,30 @@ export default function LoginPage() {
         <h1 className="mb-8 text-2xl font-black text-slate-900">
           Iniciar sesión
         </h1>
+
+        {IS_DEMO && (
+          <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+            <p className="mb-3 text-xs font-bold text-emerald-700 uppercase tracking-wide">
+              Cuentas demo
+            </p>
+            <div className="space-y-2">
+              {DEMO_ACCOUNTS.map((acc) => (
+                <button
+                  key={acc.email}
+                  type="button"
+                  onClick={() => fillDemo(acc)}
+                  className="flex w-full items-center justify-between rounded-lg border border-emerald-200 bg-white px-3 py-2 text-left text-xs transition-colors hover:border-emerald-300 hover:bg-emerald-100/50"
+                >
+                  <span className="font-semibold text-emerald-800">{acc.label}</span>
+                  <span className="text-[10px] text-emerald-500">{acc.email}</span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-[10px] text-emerald-500">
+              Haz clic en una cuenta para rellenar los campos automáticamente
+            </p>
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm font-semibold text-red-700">
