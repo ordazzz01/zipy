@@ -1,0 +1,25 @@
+[
+  {
+    "id": "merchant-demo-1",
+    "ownerUid": "",
+    "businessName": "Tacos El Vaquero S.A. de C.V.",
+    "businessAlias": "Tacos El Vaquero",
+    "description": "Los mejores tacos al pastor de la colonia Centro. Tortillas hechas a mano, carne al pastor de receta familiar desde 1985.",
+    "logoURL": "",
+    "coverURL": "",
+    "phone": "+529811111111",
+    "email": "contacto@tacoselvaquero.demo",
+    "taxId": "TVA850101ABC",
+    "isActive": true,
+    "isOpen": true,
+    "openTime": "09:00",
+    "closeTime": "23:00",
+    "preparationTimeMinutes": 15,
+    "deliveryRadiusKm": 5,
+    "commissionRate": 0.15,
+    "minOrderAmount": 3000,
+    "averageRating": 4.5,
+    "totalRatings": 128,
+    "totalOrders": 450
+  }
+]

@@ -1,0 +1,50 @@
+{
+  "customer-1": [
+    {
+      "id": "addr-casa",
+      "label": "Casa",
+      "street": "Calle 5 de Mayo",
+      "extNumber": "123",
+      "intNumber": "",
+      "neighborhood": "Col. Centro",
+      "city": "Ciudad de Mexico",
+      "state": "CDMX",
+      "zipCode": "06000",
+      "reference": "Frente al kiosco, edificio azul",
+      "location": { "lat": 19.4326, "lng": -99.1332 },
+      "isDefault": true
+    },
+    {
+      "id": "addr-oficina",
+      "label": "Oficina",
+      "street": "Av. Paseo de la Reforma",
+      "extNumber": "456",
+      "intNumber": "Piso 8",
+      "neighborhood": "Col. Juarez",
+      "city": "Ciudad de Mexico",
+      "state": "CDMX",
+      "zipCode": "06600",
+      "reference": "Torre Reforma, entrada por Insurgentes",
+      "location": { "lat": 19.4333, "lng": -99.1417 },
+      "isDefault": false
+    }
+  ],
+  "merchant-demo-1": {
+    "street": "Av. Insurgentes Sur",
+    "extNumber": "789",
+    "neighborhood": "Col. Del Valle",
+    "city": "Ciudad de Mexico",
+    "state": "CDMX",
+    "zipCode": "03100",
+    "location": { "lat": 19.3869, "lng": -99.1700 }
+  },
+  "driver-1": {
+    "street": "Calle Durango",
+    "extNumber": "234",
+    "neighborhood": "Col. Roma",
+    "city": "Ciudad de Mexico",
+    "state": "CDMX",
+    "zipCode": "06700",
+    "location": { "lat": 19.4194, "lng": -99.1614 }
+  }
+}

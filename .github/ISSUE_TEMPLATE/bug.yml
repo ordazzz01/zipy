@@ -1,0 +1,32 @@
+---
+name: Bug Report
+about: Reporta un error
+title: '[BUG] '
+labels: bug
+assignees: ''
+
+---
+
+**Describe el bug**
+_Texto claro y conciso_
+
+**Para reproducir**
+1. Ir a '...'
+2. Click en '...'
+3. Error: '...'
+
+**Comportamiento esperado**
+_Lo que debería pasar_
+
+**Screenshots**
+_Si aplica_
+
+**Entorno**
+- App: customer / merchant / driver / admin
+- Browser: Chrome / Firefox / Safari
+- Vercel preview URL: _
+
+**Logs relevantes**
+```
+pegar logs aquí
+```

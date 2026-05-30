@@ -1,0 +1,105 @@
+[
+  {
+    "merchantId": "merchant-demo-1",
+    "categories": [
+      { "id": "cat-1", "name": "Tacos", "sortOrder": 0 },
+      { "id": "cat-2", "name": "Bebidas", "sortOrder": 1 }
+    ],
+    "products": [
+      {
+        "id": "prod-taco-pastor",
+        "categoryId": "cat-1",
+        "name": "Taco al Pastor",
+        "description": "Taco de pastor con pina, cebolla y cilantro. Tortilla de maiz.",
+        "price": 2500,
+        "imageURLs": [],
+        "isAvailable": true,
+        "sortOrder": 0,
+        "estimatedPrepMinutes": 5,
+        "optionGroups": [
+          {
+            "id": "optg-1",
+            "name": "Tortilla",
+            "isRequired": true,
+            "maxChoices": 1,
+            "sortOrder": 0,
+            "options": [
+              { "id": "opt-1", "name": "Maiz", "priceAdjustment": 0, "isDefault": true, "sortOrder": 0 },
+              { "id": "opt-2", "name": "Harina", "priceAdjustment": 200, "isDefault": false, "sortOrder": 1 }
+            ]
+          },
+          {
+            "id": "optg-2",
+            "name": "Extra",
+            "isRequired": false,
+            "maxChoices": 3,
+            "sortOrder": 1,
+            "options": [
+              { "id": "opt-3", "name": "Queso extra", "priceAdjustment": 500, "sortOrder": 0 },
+              { "id": "opt-4", "name": "Cebolla extra", "priceAdjustment": 0, "sortOrder": 1 },
+              { "id": "opt-5", "name": "Salsa verde", "priceAdjustment": 0, "sortOrder": 2 },
+              { "id": "opt-6", "name": "Guacamole", "priceAdjustment": 1000, "sortOrder": 3 }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "prod-taco-suadero",
+        "categoryId": "cat-1",
+        "name": "Taco de Suadero",
+        "description": "Taco de suadero dorado en su propia grasa. Cebolla y cilantro.",
+        "price": 2500,
+        "imageURLs": [],
+        "isAvailable": true,
+        "sortOrder": 1,
+        "estimatedPrepMinutes": 6,
+        "optionGroups": [
+          {
+            "id": "optg-1",
+            "name": "Tortilla",
+            "isRequired": true,
+            "maxChoices": 1,
+            "sortOrder": 0,
+            "options": [
+              { "id": "opt-1", "name": "Maiz", "priceAdjustment": 0, "isDefault": true, "sortOrder": 0 },
+              { "id": "opt-2", "name": "Harina", "priceAdjustment": 200, "isDefault": false, "sortOrder": 1 }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "prod-taco-carnitas",
+        "categoryId": "cat-1",
+        "name": "Taco de Carnitas",
+        "description": "Taco de carnitas estilo Michoacan. Todos los cortes.",
+        "price": 3000,
+        "imageURLs": [],
+        "isAvailable": true,
+        "sortOrder": 2,
+        "estimatedPrepMinutes": 5
+      },
+      {
+        "id": "prod-bebida-coca",
+        "categoryId": "cat-2",
+        "name": "Coca-Cola 600ml",
+        "description": "Coca-Cola tradicional de 600ml. Bien fria.",
+        "price": 2000,
+        "imageURLs": [],
+        "isAvailable": true,
+        "sortOrder": 0,
+        "estimatedPrepMinutes": 1
+      },
+      {
+        "id": "prod-bebida-agua",
+        "categoryId": "cat-2",
+        "name": "Agua de Horchata 500ml",
+        "description": "Agua fresca de horchata, preparada al dia.",
+        "price": 1500,
+        "imageURLs": [],
+        "isAvailable": true,
+        "sortOrder": 1,
+        "estimatedPrepMinutes": 1
+      }
+    ]
+  }
+]

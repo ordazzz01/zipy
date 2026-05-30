@@ -1,0 +1,26 @@
+---
+name: Feature Request
+about: Sugiere una funcionalidad
+title: '[FEATURE] '
+labels: enhancement
+assignees: ''
+
+---
+
+**Problema que resuelve**
+_¿Qué necesidad cubre?_
+
+**Solución propuesta**
+_Descripción clara_
+
+**Alternativas consideradas**
+_Qué más se evaluó_
+
+**Impacto estimado**
+- [ ] Frontend (customer / merchant / driver / admin)
+- [ ] Backend (Cloud Functions)
+- [ ] Firestore (nuevos campos / colecciones)
+- [ ] Firestore rules
+
+**Mockups / referencias**
+_Si aplica_
