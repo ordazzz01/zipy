@@ -1,98 +1,82 @@
 # Zipy — Reporte de Implementación
 
 ## ⚠️ Aviso
-Este reporte refleja **SOLO lo que existe en el código** y puede validarse ejecutando los comandos indicados. No describe arquitectura futura como si estuviera implementada.
+Este reporte refleja **SOLO lo que existe en el código** y puede validarse ejecutando los comandos indicados. No describe arquitectura o features futuras como si estuvieran implementadas.
 
 ---
 
 ## Implementado ✅
 
 ### Monorepo
-| Componente | Evidencia | Validación |
-|-----------|-----------|------------|
-| pnpm workspace | `pnpm-workspace.yaml` define 4 apps + 4 packages | `pnpm ls -r` |
-| Turborepo | `turbo.json` con pipeline build, lint, test | `pnpm build` desde raíz |
-| tsconfig base | `tsconfig.base.json` compartido | existe en raíz |
+| Componente | Evidencia |
+|-----------|-----------|
+| pnpm workspace | `pnpm-workspace.yaml` define 4 apps + 4 packages |
+| Turborepo | `turbo.json` con pipeline build, lint, test |
+| tsconfig base compartido | `tsconfig.base.json` en raíz |
+| Root scripts dev/build/typecheck/seed | `package.json` raíz |
 
 ### customer-web (Next.js 15, App Router, Tailwind v4)
+
 | Componente | Archivo |
 |-----------|---------|
-| Layout raíz | `apps/customer/src/app/layout.tsx` |
-| Home page | `apps/customer/src/app/page.tsx` |
-| Login page (funcional con Firebase Auth) | `apps/customer/src/app/auth/login/page.tsx` |
-| Register page (funcional con Firebase Auth) | `apps/customer/src/app/auth/register/page.tsx` |
-| Firebase init | `apps/customer/src/lib/firebase.ts` |
+| Layout raíz con AuthProvider | `apps/customer/src/app/layout.tsx` |
+| Home page con auth state + logout | `apps/customer/src/app/page.tsx` |
+| Login page (Firebase Auth, redirect si logueado) | `apps/customer/src/app/auth/login/page.tsx` |
+| Register page (Firebase Auth + Firestore profile, validación teléfono) | `apps/customer/src/app/auth/register/page.tsx` |
+| Firebase init con SSR guard + emulador | `apps/customer/src/lib/firebase.ts` |
+| AuthProvider + useAuth (onAuthStateChanged, role desde Firestore) | `apps/customer/src/lib/AuthProvider.tsx` |
+| next.config.ts (strict, security headers) | `apps/customer/next.config.ts` |
 | PWA manifest | `apps/customer/public/manifest.json` |
-| Tailwind config | `apps/customer/postcss.config.mjs`, `apps/customer/src/app/globals.css` |
+| PostCSS + Tailwind | `postcss.config.mjs`, `src/app/globals.css` |
 
 ### @zipy/core (Zod schemas)
-| Schema | Archivo | Campos cubiertos |
-|--------|---------|-----------------|
-| UserProfile | `packages/core/src/index.ts` | 13 campos: id, email, displayName, phone, role, merchantId, isActive, etc. |
-| Address | `packages/core/src/index.ts` | 10 campos: street, extNum, neighborhood, city, state, zip, etc. |
-| ProductCategory | `packages/core/src/index.ts` | name, description, imageUrl, isActive |
-| Product | `packages/core/src/index.ts` | name, description, price (centavos), categoryId, merchantId, images, etc. |
-| Order | `packages/core/src/index.ts` | 14 campos: customerId, merchantId, items, status, total, etc. |
-| MerchantProfile | `packages/core/src/index.ts` | 17 campos: businessName, ownerId, schedule, etc. |
-| DriverProfile | `packages/core/src/index.ts` | id, displayName, phone, vehicle, isActive, etc. |
-| Coupon | `packages/core/src/index.ts` | code, type, discount, maxUses, expiresAt, etc. |
+| Schema | Archivo |
+|--------|---------|
+| UserProfile, Address, ProductCategory, Product, Order, MerchantProfile, DriverProfile, Coupon | `packages/core/src/index.ts` |
 
-### Web App Manifest
-| Atributo | Valor |
-|----------|-------|
-| name | Zipy |
-| short_name | Zipy |
-| theme_color | `#f97316` |
-| background_color | `#fff7ed` |
-| display | `standalone` |
+### Firebase config
+
+| Archivo | Propósito |
+|---------|-----------|
+| `firebase.json` | Config: Firestore rules + indexes, Functions, Storage, Emulators |
+| `.firebaserc` | Proyecto por defecto: `zipy-dev` |
+| `firestore.rules` | Reglas por rol usando `getUserRole()` desde `users/{uid}` — no depende de custom claims |
+| `firestore.indexes.json` | Placeholder |
+| `storage.rules` | Reglas básicas de Storage |
 
 ### Seeds (Firebase Emulator)
 | Componente | Archivo |
 |-----------|---------|
-| Seed script | `seed/scripts/seed.ts` — idempotente, con guard de emulador |
+| Seed script (idempotente, guard emulador) | `seed/scripts/seed.ts` |
 | Clean script | `seed/scripts/clean.ts` |
 | Demo accounts | `seed/demo-accounts.md` |
-| Merchant data | `seed/config/merchants.json` (1 merchant campechano) |
-| Products | `seed/config/products.json` (5 productos) |
-| Addresses | `seed/config/addresses.json` (2 direcciones) |
+| Merchant data | `seed/config/merchants.json` |
+| Products (x5) | `seed/config/products.json` |
+| Addresses | `seed/config/addresses.json` |
 | Coupons | `seed/config/coupons.json` |
-| Demo users | 4 cuentas: customer, merchant, driver, admin |
-
-### Firebase config
-| Archivo | Propósito |
-|---------|-----------|
-| `firebase.json` | Configuración completa: Firestore rules + indexes, Functions, Storage, Emulators |
-| `.firebaserc` | Proyecto por defecto: `zipy-dev` |
-| `firestore.rules` | Reglas de seguridad por rol (customer, merchant, driver, admin) |
-| `firestore.indexes.json` | Índices compuestos (vació — añadir según queries) |
-| `storage.rules` | Reglas de Storage |
 
 ### GitHub Actions
 | Workflow | Archivo | Estado |
 |----------|---------|--------|
-| CI | `.github/workflows/ci.yml` | ✅ Escucha PR a main/develop y push a develop. Lint (continue-on-error), typecheck (falla si hay error), build. |
-| CD | `.github/workflows/cd.yml` | ✅ Escucha push a main. Verify build → Deploy Vercel (secuencial). Sin Firebase secrets expuestos. |
-| Preview | `.github/workflows/preview.yml` | 🟡 Escucha PR a main. Solo deploy. |
-| Security | `.github/workflows/security.yml` | 🟡 Escucha push a main/develop. Sin scanner configurado aún. |
+| CI | `.github/workflows/ci.yml` | ✅ PR main/develop + push develop. Lint (continue-on-error), typecheck (falla), test (dummy), build |
+| CD | `.github/workflows/cd.yml` | ✅ Push main. Verify build → Deploy Vercel. Sin Firebase secrets |
+| Preview | `.github/workflows/preview.yml` | ✅ PR main. Deploy preview con NEXT_PUBLIC_USE_DEMO |
+| Security | `.github/workflows/security.yml` | 🟡 Sin scanner real configurado |
 
 ### GitHub config
-| Elemento | Estado |
-|----------|--------|
+| Elemento | Valor |
+|----------|-------|
 | Default branch | `main` |
 | Develop branch | `develop` |
-| VERCEL_TOKEN | Configurado como GitHub secret |
-| VERCEL_ORG_ID | Configurado como GitHub secret |
-| VERCEL_PROJECT_ID | Configurado como GitHub secret |
+| Secrets (Vercel) | VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID |
 
-### Vercel deploy
+### Vercel
 | Atributo | Valor |
 |----------|-------|
 | URL producción | **https://customer-mu-seven.vercel.app** |
-| Framework | Next.js |
 | Build command | `pnpm --filter @zipy/customer-web build` |
-| Install command | `pnpm install --no-frozen-lockfile` |
 | Root directory | `apps/customer` |
-| Env vars | `NEXT_PUBLIC_USE_DEMO=true` (producción + preview) |
+| Framework | Next.js |
 
 ### GitHub templates
 | Plantilla | Archivo |
@@ -105,76 +89,54 @@ Este reporte refleja **SOLO lo que existe en el código** y puede validarse ejec
 
 ## Parcialmente implementado 🟡
 
-### Cloud Functions
-- Archivo: `functions/src/index.ts`
-- Contenido: `export const placeholder = true`
-- **No hay funciones reales implementadas**
-
-### Release Check Script
-- Archivo: `scripts/release-check.sh`
-- Valida: git status, lint, typecheck, build
-- **No integrado en CI/CD**
-
-### README
-- Archivo: `README.md`
-- Contiene: instrucciones de instalación, cuentas demo, estructura, comandos, despliegue
-- **Apps merchant/driver/admin marcadas explícitamente como pendientes**
+| Componente | Notas |
+|-----------|-------|
+| Cloud Functions | `functions/src/index.ts` con `export const placeholder = true`. Sin Functions reales |
+| Release Check Script | `scripts/release-check.sh`. No integrado en CI/CD |
+| README | Instrucciones verificables, apps pendientes marcadas con 🟡 |
 
 ---
 
 ## Pendiente ❌
 
-### Apps
-| App | Estado | Acción requerida |
-|-----|--------|-----------------|
-| merchant-web | ❌ No existe | Crear scaffolding, package.json, page.tsx |
-| driver-web | ❌ No existe | Crear scaffolding |
-| admin-web | ❌ No existe | Crear scaffolding |
-
-### Packages
-| Package | Estado | Acción requerida |
-|---------|--------|-----------------|
-| `@zipy/firebase` | ❌ Vacío | Crear helpers de Firebase |
-| `@zipy/ui` | ❌ Vacío | Crear componentes base |
-| `@zipy/config` | ❌ Vacío | Crear constantes compartidas |
-
-### Funcionalidad backend
 | Feature | Estado |
 |---------|--------|
-| Firebase project `zipy-dev` | ❌ No creado en console |
-| Auth real (producción) | ❌ Sin proyecto Firebase |
-| Firestore con datos reales | ❌ Solo demo data en emulador |
+| merchant-web app | ❌ No existe |
+| driver-web app | ❌ No existe |
+| admin-web app | ❌ No existe |
+| `@zipy/firebase` package | ❌ Vacío |
+| `@zipy/ui` package | ❌ Vacío |
+| `@zipy/config` package | ❌ Vacío |
+| Proyecto Firebase `zipy-dev` en console | ❌ No creado |
+| Auth/Login contra Firebase real | ❌ Solo emulador |
 | Catalog from Firestore | ❌ No implementado |
 | Cart / Zustand stores | ❌ No implementado |
-| Orders | ❌ No implementado |
-| Stripe | ❌ No implementado (pospuesto) |
-| Maps | ❌ No implementado (pospuesto) |
-| GPS | ❌ No implementado (pospuesto) |
-| rate limiting | ❌ No implementado |
-| Audit logs | ❌ No implementado |
-| Tests | ❌ No implementados |
+| Orders flow | ❌ No implementado |
+| Stripe, Maps, GPS | ❌ Pospuesto post-MVP |
+| Rate limiting / Audit logs | ❌ No implementado |
+| Tests unitarios / E2E | ❌ No implementados |
 
 ---
 
 ## Comandos de validación
 
 ```bash
-# Verificar estructura del monorepo
-pnpm ls -r
-
-# Build completo (debe pasar)
+# Build
 pnpm build
 
-# TypeScript type check (debe pasar)
+# Type check
 pnpm typecheck
 
-# Iniciar emulador
-pnpm emulators
+# Test (dummy)
+pnpm test
 
-# Cargar datos demo (requiere emulador corriendo)
+# Emulador local
+pnpm --filter @zipy/functions emulators
+
+# Seed (requiere emulador)
 pnpm seed
 
-# Verificar deploy URL
+# Deploy verificado
 curl -s -o /dev/null -w "%{http_code}" https://customer-mu-seven.vercel.app/auth/login
-# Debe devolver 200
+# → 200
 ```
