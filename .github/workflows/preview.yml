@@ -12,7 +12,6 @@ jobs:
   preview:
     name: Deploy preview
     runs-on: ubuntu-latest
-    environment: preview
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -28,3 +27,5 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        env:
+          NEXT_PUBLIC_USE_DEMO: "true"

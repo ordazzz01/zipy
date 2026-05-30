@@ -1,17 +1,33 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { useAuth } from '@/lib/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Redirigir si ya hay sesion
+  useEffect(() => {
+    if (authLoading) return;
+    if (user) router.replace('/');
+  }, [user, authLoading, router]);
+
+  if (authLoading) {
+    return <LoadingSkeleton />;
+  }
+
+  if (user) {
+    return null; // useEffect redirige
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -100,6 +116,19 @@ export default function LoginPage() {
             Registrarse
           </Link>
         </p>
+      </div>
+    </main>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-6">
+      <div className="w-full max-w-sm animate-pulse space-y-4">
+        <div className="h-8 w-48 rounded-xl bg-orange-200" />
+        <div className="h-12 w-full rounded-xl bg-orange-100" />
+        <div className="h-12 w-full rounded-xl bg-orange-100" />
+        <div className="h-12 w-full rounded-xl bg-orange-200" />
       </div>
     </main>
   );

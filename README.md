@@ -7,7 +7,7 @@ Plataforma de delivery local on-demand. Monorepo con pnpm + Turborepo.
 | Capa | Tecnología |
 |------|-----------|
 | Frontend | Next.js 15 (App Router), React 19, Tailwind v4 |
-| Backend | Firebase (Auth, Firestore, Storage, Functions) |
+| Backend | Firebase (Auth, Firestore, Storage, Functions) — pendiente de configurar |
 | Infra | Vercel, Firebase Hosting |
 | Monorepo | pnpm workspaces + Turborepo |
 | CI/CD | GitHub Actions |
@@ -16,7 +16,7 @@ Plataforma de delivery local on-demand. Monorepo con pnpm + Turborepo.
 
 | App | Estado | URL |
 |-----|--------|-----|
-| customer-web | ✅ Implementado (login, register, home) | [Vercel](https://customer-mu-seven.vercel.app) |
+| customer-web | ✅ Implementado (login, register, home, auth state) | [Vercel](https://customer-mu-seven.vercel.app) |
 | merchant-web | 🟡 Pendiente | — |
 | driver-web | 🟡 Pendiente | — |
 | admin-web | 🟡 Pendiente | — |
@@ -39,7 +39,7 @@ pnpm install
 cp .env.example .env.local
 
 # 3. Iniciar Firebase Emulator (en una terminal)
-pnpm emulators
+pnpm --filter @zipy/functions emulators
 
 # 4. Cargar datos demo (en otra terminal)
 pnpm seed
@@ -85,12 +85,20 @@ pnpm dev          # Iniciar customer-web en dev
 pnpm build        # Build customer-web
 pnpm lint         # Lint customer-web
 pnpm typecheck    # TypeScript type check
+pnpm test         # Tests (no configurados aun)
 pnpm seed         # Cargar datos demo
 pnpm seed:reset   # Limpiar y recargar datos demo
-pnpm emulators    # Iniciar Firebase Emulator
+pnpm --filter @zipy/functions emulators  # Iniciar Firebase Emulator
 ```
 
 ## Despliegue
 
 - **Producción:** Push a `main` → CI verifica build → CD deploya a Vercel
 - **Preview:** PR a `main` → GitHub Actions deploya preview automático
+
+## Notas técnicas
+
+- El auth state se maneja con `AuthProvider` (Context + onAuthStateChanged)
+- Los roles de Firestore se leen desde `users/{uid}.role` (no dependen de custom claims)
+- Las `firestore.rules` usan `getUserRole()` helper para autorización por rol
+- `firebase-tools` debe instalarse: `pnpm install` lo obtiene automáticamente via `@zipy/functions`

@@ -1,14 +1,18 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
+import { useAuth } from '@/lib/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const PHONE_REGEX = /^[0-9+\- ]{7,15}$/;
+
 export default function RegisterPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -16,32 +20,54 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Redirigir si ya hay sesion
+  useEffect(() => {
+    if (authLoading) return;
+    if (user) router.replace('/');
+  }, [user, authLoading, router]);
+
+  if (authLoading) {
+    return <LoadingSkeleton />;
+  }
+
+  if (user) {
+    return null;
+  }
+
+  function validate(): string | null {
+    if (password.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
+    if (phone && !PHONE_REGEX.test(phone)) return 'El teléfono no es válido (solo números y hasta 15 dígitos)';
+    return null;
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
-      setLoading(false);
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
       return;
     }
+
+    setLoading(true);
 
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
 
-      // Crear perfil de usuario en Firestore
+      const createdAt = Timestamp.now();
+
       await setDoc(doc(db, 'users', cred.user.uid), {
         id: cred.user.uid,
         email,
         displayName: name,
-        phone,
+        phone: phone || '',
         role: 'customer',
         isActive: true,
         locale: 'es-MX',
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now(),
+        createdAt,
+        updatedAt: createdAt,
       });
 
       router.push('/');
@@ -156,6 +182,21 @@ export default function RegisterPage() {
             Iniciar sesión
           </Link>
         </p>
+      </div>
+    </main>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-6">
+      <div className="w-full max-w-sm animate-pulse space-y-4">
+        <div className="h-8 w-48 rounded-xl bg-orange-200" />
+        <div className="h-12 w-full rounded-xl bg-orange-100" />
+        <div className="h-12 w-full rounded-xl bg-orange-100" />
+        <div className="h-12 w-full rounded-xl bg-orange-100" />
+        <div className="h-12 w-full rounded-xl bg-orange-100" />
+        <div className="h-12 w-full rounded-xl bg-orange-200" />
       </div>
     </main>
   );
